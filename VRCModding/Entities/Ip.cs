@@ -3,15 +3,17 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace VRCModding.Entities;
 
-public class Ip
+public class Ip : IUserInfo
 {
-    [Key] 
-    [MaxLength(15)]
-    public string Id { get; set; }
+	#region Base
+	[Key]
+	[MaxLength(15)]
+	public string? Id { get; set; }
     
-    [ForeignKey("User")]
-    public string? UserFK { get; set; }
-    public User User { get; set; }
-
-    public DateTime LastLogin { get; set; } = DateTime.UtcNow;
+	[ForeignKey("User")]
+	public Guid UserFK { get; set; }
+	public User User { get; set; }
+    
+	public DateTime LastLogin { get; set; } = DateTime.UtcNow;
+	#endregion
 }

@@ -1,18 +1,21 @@
-﻿using VRCModding.Api;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using VRCModding.Api;
 
 namespace VRCModding.Business; 
 
 public class ExceptionBuilder {
-	public ApiException Api(Enums.ErrorCodes code, object? details = null) {
+	public ApiException Api(ErrorCodes code, object? details = null) {
 		var message = code switch {
-			Enums.ErrorCodes.Unknown => "An Unknown error has occurred",
+			ErrorCodes.Unknown => "An Unknown error has occurred.",
+			ErrorCodes.InsufficientCredentials => "At least two credentials are necessary to log in.",
+			ErrorCodes.HwidIsRequired => "The User's HWID is required.",
+			ErrorCodes.UserIdIsRequired => "The User's ID is required.",
+			ErrorCodes.IpIsRequired => "The User's IP is required.",
+			ErrorCodes.FailedToFetchIp => "An error occurred while trying to fetch User's IP, and the operation failed to complete.",
+			ErrorCodes.FailedToDeduceUser => "An error occurred while trying to deduce User from given info, and the operation failed to complete.",
+			ErrorCodes.UserHoneypotted => "Honeypotted Users cannot login.",
 			_ => string.Empty
 		};
-		return new ApiException(new ErrorModel() { Code = code, Message = message, Details = getDetailsDictionary(details) });
+		return new ApiException(new ErrorModel { Code = code, Message = message, Details = getDetailsDictionary(details) });
 	}
 
 	private static Dictionary<string, string>? getDetailsDictionary(object? details) {
@@ -24,5 +27,13 @@ public class ExceptionBuilder {
 			dic[descriptor.Name] = descriptor.GetValue(details, null)?.ToString() ?? "null";
 		}
 		return dic;
+	}
+}
+
+public class ApiException : Exception {
+	public ErrorModel Error { get; set; }
+
+	public ApiException(ErrorModel error) : base(error.Message) {
+		Error = error;
 	}
 }

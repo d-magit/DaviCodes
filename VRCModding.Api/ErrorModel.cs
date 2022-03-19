@@ -1,9 +1,4 @@
 using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace VRCModding.Api;
 
@@ -13,18 +8,18 @@ public class ErrorModel
     public string CodeStr { get; set; }
 
     [JsonIgnore] 
-    public Enums.ErrorCodes Code 
+    public ErrorCodes Code 
     { 
         get 
         { 
-            Enums.ErrorCodes res; 
+            ErrorCodes res; 
             try 
             { 
-                res = (Enums.ErrorCodes)Enum.Parse(typeof(Enums.ErrorCodes), CodeStr); 
+                res = (ErrorCodes)Enum.Parse(typeof(ErrorCodes), CodeStr); 
             } 
             catch 
             { 
-                res = Enums.ErrorCodes.Unknown; 
+                res = ErrorCodes.Unknown; 
             } 
             return res; 
         } 

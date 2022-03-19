@@ -48,14 +48,8 @@
       <Compile Update="Entities\Hwid.cs">
         <DependentUpon>User.cs</DependentUpon>
       </Compile>
-      <Compile Update="Entities\AccountInfo.cs">
+      <Compile Update="Entities\Account.cs">
         <DependentUpon>User.cs</DependentUpon>
-      </Compile>
-      <Compile Update="Entities\DisplayName.cs">
-        <DependentUpon>UsedDisplayName.cs</DependentUpon>
-      </Compile>
-      <Compile Update="Entities\UsedDisplayName.cs">
-        <DependentUpon>AccountInfo.cs</DependentUpon>
       </Compile>
     </ItemGroup>
 

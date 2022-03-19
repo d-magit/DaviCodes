@@ -1,6 +1,5 @@
 using System.ComponentModel.DataAnnotations;
 using VRCModding.Api.DisplayName;
-using VRCModding.Api.User;
 
 namespace VRCModding.Api.AccountInfo;
 

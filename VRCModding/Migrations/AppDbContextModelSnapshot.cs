@@ -19,7 +19,7 @@ namespace VRCModding.Migrations
                 .HasAnnotation("ProductVersion", "6.0.3")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
-            modelBuilder.Entity("VRCModding.Entities.AccountInfo", b =>
+            modelBuilder.Entity("VRCModding.Entities.Account", b =>
                 {
                     b.Property<string>("Id")
                         .HasMaxLength(40)
@@ -29,8 +29,11 @@ namespace VRCModding.Migrations
                         .IsRequired()
                         .HasColumnType("varchar(255)");
 
-                    b.Property<string>("UserFK")
-                        .HasColumnType("varchar(255)");
+                    b.Property<DateTime>("LastLogin")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<Guid>("UserFK")
+                        .HasColumnType("char(36)");
 
                     b.HasKey("Id");
 
@@ -39,7 +42,7 @@ namespace VRCModding.Migrations
 
                     b.HasIndex("UserFK");
 
-                    b.ToTable("AccountInfos");
+                    b.ToTable("Accounts");
                 });
 
             modelBuilder.Entity("VRCModding.Entities.DisplayName", b =>
@@ -61,8 +64,8 @@ namespace VRCModding.Migrations
                     b.Property<DateTime>("LastLogin")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<string>("UserFK")
-                        .HasColumnType("varchar(255)");
+                    b.Property<Guid>("UserFK")
+                        .HasColumnType("char(36)");
 
                     b.HasKey("Id");
 
@@ -80,8 +83,8 @@ namespace VRCModding.Migrations
                     b.Property<DateTime>("LastLogin")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<string>("UserFK")
-                        .HasColumnType("varchar(255)");
+                    b.Property<Guid>("UserFK")
+                        .HasColumnType("char(36)");
 
                     b.HasKey("Id");
 
@@ -92,7 +95,7 @@ namespace VRCModding.Migrations
 
             modelBuilder.Entity("VRCModding.Entities.UsedDisplayName", b =>
                 {
-                    b.Property<string>("AccountInfoFK")
+                    b.Property<string>("AccountFK")
                         .HasColumnType("varchar(40)");
 
                     b.Property<string>("DisplayNameFK")
@@ -104,7 +107,7 @@ namespace VRCModding.Migrations
                     b.Property<DateTime>("LastUsage")
                         .HasColumnType("datetime(6)");
 
-                    b.HasKey("AccountInfoFK", "DisplayNameFK");
+                    b.HasKey("AccountFK", "DisplayNameFK");
 
                     b.HasIndex("DisplayNameFK");
 
@@ -113,8 +116,9 @@ namespace VRCModding.Migrations
 
             modelBuilder.Entity("VRCModding.Entities.User", b =>
                 {
-                    b.Property<string>("Name")
-                        .HasColumnType("varchar(255)");
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("char(36)");
 
                     b.Property<DateTime>("CreationDateUtc")
                         .HasColumnType("datetime(6)");
@@ -122,22 +126,27 @@ namespace VRCModding.Migrations
                     b.Property<DateTime>("LastLogin")
                         .HasColumnType("datetime(6)");
 
-                    b.HasKey("Name");
+                    b.Property<string>("Name")
+                        .HasColumnType("longtext");
+
+                    b.HasKey("Id");
 
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("VRCModding.Entities.AccountInfo", b =>
+            modelBuilder.Entity("VRCModding.Entities.Account", b =>
                 {
                     b.HasOne("VRCModding.Entities.DisplayName", "CurrentDisplayName")
                         .WithOne("CurrentAccount")
-                        .HasForeignKey("VRCModding.Entities.AccountInfo", "DisplayNameFK")
+                        .HasForeignKey("VRCModding.Entities.Account", "DisplayNameFK")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("VRCModding.Entities.User", "User")
                         .WithMany("Accounts")
-                        .HasForeignKey("UserFK");
+                        .HasForeignKey("UserFK")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("CurrentDisplayName");
 
@@ -148,7 +157,9 @@ namespace VRCModding.Migrations
                 {
                     b.HasOne("VRCModding.Entities.User", "User")
                         .WithMany("KnownHWIDs")
-                        .HasForeignKey("UserFK");
+                        .HasForeignKey("UserFK")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("User");
                 });
@@ -157,16 +168,18 @@ namespace VRCModding.Migrations
                 {
                     b.HasOne("VRCModding.Entities.User", "User")
                         .WithMany("KnownIPs")
-                        .HasForeignKey("UserFK");
+                        .HasForeignKey("UserFK")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("User");
                 });
 
             modelBuilder.Entity("VRCModding.Entities.UsedDisplayName", b =>
                 {
-                    b.HasOne("VRCModding.Entities.AccountInfo", "AccountInfo")
+                    b.HasOne("VRCModding.Entities.Account", "Account")
                         .WithMany("DisplayNameHistory")
-                        .HasForeignKey("AccountInfoFK")
+                        .HasForeignKey("AccountFK")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -176,12 +189,12 @@ namespace VRCModding.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("AccountInfo");
+                    b.Navigation("Account");
 
                     b.Navigation("DisplayName");
                 });
 
-            modelBuilder.Entity("VRCModding.Entities.AccountInfo", b =>
+            modelBuilder.Entity("VRCModding.Entities.Account", b =>
                 {
                     b.Navigation("DisplayNameHistory");
                 });

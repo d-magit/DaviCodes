@@ -1,10 +1,13 @@
 namespace VRCModding.Api;
 
-public class Enums
-{
-    public enum ErrorCodes
-    { 
-        Unknown = 0
-        // Todo: Implement error dealing
-    }
+public enum ErrorCodes
+{ 
+    Unknown ,
+    InsufficientCredentials,
+    HwidIsRequired,
+    UserIdIsRequired,
+    IpIsRequired,
+    FailedToFetchIp,
+    FailedToDeduceUser,
+    UserHoneypotted
 }

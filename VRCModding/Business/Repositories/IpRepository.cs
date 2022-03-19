@@ -11,15 +11,18 @@ public class IpRepository {
 	}
     
 	public async Task<Ip?> TryGetAsync(string ip) =>
-		await dbContext.Ips.FirstOrDefaultAsync(i => i.Id == ip);
+		await dbContext.Ips
+			.Include(i => i.User)
+			.FirstOrDefaultAsync(i => i.Id == ip);
     
-	public async Task<Ip> CreateAsync(string ip) {
-		var ipCreated = new Ip() {
-			Id = ip
+	public async Task<Ip> CreateAsync(string? ip, Guid guid) {
+		var ipEntity = new Ip {
+			Id = ip,
+			UserFK = guid
 		};
 
-		await dbContext.AddAsync(ipCreated);
+		await dbContext.AddAsync(ipEntity);
 
-		return ipCreated;
+		return ipEntity;
 	}
 }

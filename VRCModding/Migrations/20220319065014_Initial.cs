@@ -29,42 +29,44 @@ namespace VRCModding.Migrations
                 name: "Users",
                 columns: table => new
                 {
-                    Name = table.Column<string>(type: "varchar(255)", nullable: false)
+                    Id = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
+                    Name = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     LastLogin = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     CreationDateUtc = table.Column<DateTime>(type: "datetime(6)", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Users", x => x.Name);
+                    table.PrimaryKey("PK_Users", x => x.Id);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "AccountInfos",
+                name: "Accounts",
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "varchar(40)", maxLength: 40, nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    UserFK = table.Column<string>(type: "varchar(255)", nullable: true)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    UserFK = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
+                    LastLogin = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     DisplayNameFK = table.Column<string>(type: "varchar(255)", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4")
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_AccountInfos", x => x.Id);
+                    table.PrimaryKey("PK_Accounts", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_AccountInfos_DisplayNames_DisplayNameFK",
+                        name: "FK_Accounts_DisplayNames_DisplayNameFK",
                         column: x => x.DisplayNameFK,
                         principalTable: "DisplayNames",
                         principalColumn: "Name",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_AccountInfos_Users_UserFK",
+                        name: "FK_Accounts_Users_UserFK",
                         column: x => x.UserFK,
                         principalTable: "Users",
-                        principalColumn: "Name");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
@@ -74,8 +76,7 @@ namespace VRCModding.Migrations
                 {
                     Id = table.Column<string>(type: "varchar(40)", maxLength: 40, nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    UserFK = table.Column<string>(type: "varchar(255)", nullable: true)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    UserFK = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
                     LastLogin = table.Column<DateTime>(type: "datetime(6)", nullable: false)
                 },
                 constraints: table =>
@@ -85,7 +86,8 @@ namespace VRCModding.Migrations
                         name: "FK_Hwids_Users_UserFK",
                         column: x => x.UserFK,
                         principalTable: "Users",
-                        principalColumn: "Name");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
@@ -95,8 +97,7 @@ namespace VRCModding.Migrations
                 {
                     Id = table.Column<string>(type: "varchar(15)", maxLength: 15, nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    UserFK = table.Column<string>(type: "varchar(255)", nullable: true)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    UserFK = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
                     LastLogin = table.Column<DateTime>(type: "datetime(6)", nullable: false)
                 },
                 constraints: table =>
@@ -106,7 +107,8 @@ namespace VRCModding.Migrations
                         name: "FK_Ips_Users_UserFK",
                         column: x => x.UserFK,
                         principalTable: "Users",
-                        principalColumn: "Name");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
@@ -114,7 +116,7 @@ namespace VRCModding.Migrations
                 name: "UsedDisplayNames",
                 columns: table => new
                 {
-                    AccountInfoFK = table.Column<string>(type: "varchar(40)", nullable: false)
+                    AccountFK = table.Column<string>(type: "varchar(40)", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     DisplayNameFK = table.Column<string>(type: "varchar(255)", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
@@ -123,11 +125,11 @@ namespace VRCModding.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_UsedDisplayNames", x => new { x.AccountInfoFK, x.DisplayNameFK });
+                    table.PrimaryKey("PK_UsedDisplayNames", x => new { x.AccountFK, x.DisplayNameFK });
                     table.ForeignKey(
-                        name: "FK_UsedDisplayNames_AccountInfos_AccountInfoFK",
-                        column: x => x.AccountInfoFK,
-                        principalTable: "AccountInfos",
+                        name: "FK_UsedDisplayNames_Accounts_AccountFK",
+                        column: x => x.AccountFK,
+                        principalTable: "Accounts",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
@@ -140,14 +142,14 @@ namespace VRCModding.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateIndex(
-                name: "IX_AccountInfos_DisplayNameFK",
-                table: "AccountInfos",
+                name: "IX_Accounts_DisplayNameFK",
+                table: "Accounts",
                 column: "DisplayNameFK",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_AccountInfos_UserFK",
-                table: "AccountInfos",
+                name: "IX_Accounts_UserFK",
+                table: "Accounts",
                 column: "UserFK");
 
             migrationBuilder.CreateIndex(
@@ -178,7 +180,7 @@ namespace VRCModding.Migrations
                 name: "UsedDisplayNames");
 
             migrationBuilder.DropTable(
-                name: "AccountInfos");
+                name: "Accounts");
 
             migrationBuilder.DropTable(
                 name: "DisplayNames");

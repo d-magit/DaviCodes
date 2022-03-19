@@ -1,4 +1,4 @@
-using System.Configuration;
+using VRCModding.Business;
 using VRCModding.Business.Repositories;
 using VRCModding.Business.Services;
 using VRCModding.Configuration;
@@ -7,11 +7,14 @@ using VRCModding.Services;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 
+// Todo: Find out what is the category of this shit...
+// [assembly: SuppressMessage("Microsoft.Design", "CS8618", Justification = "Entity class does not need initialization.", Scope = "namespaceanddescendants", Target = nameof(VRCModding.Entities))]
+
 var builder = WebApplication.CreateBuilder(args);
 builder.Host.ConfigureLogging((hostingContext, logging) => {
 	logging.AddSerilog(
 		new LoggerConfiguration()
-			.ReadFrom.Configuration(hostingContext.Configuration, "Serilog")
+			.ReadFrom.Configuration(hostingContext.Configuration, "Serilog") // Todo: Find out how to log per day or instance of Run
 			.CreateLogger()
 	);
 });
@@ -28,20 +31,23 @@ builder.Services.AddDbContext<AppDbContext>(opt =>
     opt.UseMySql(connectionString, new MariaDbServerVersion(ServerVersion.AutoDetect(connectionString)));
 });
 builder.Services.AddScoped<ModelConverter>();
+builder.Services.AddScoped<ExceptionBuilder>();
 //builder.Services.AddSwaggerGen(c =>
 //{
 //    c.SwaggerDoc("v1", new() { Title = "TodoApi", Version = "v1" });
 //});
 
 // Business Repositories
-builder.Services.AddScoped<AccountInfoRepository>();
+builder.Services.AddScoped<AccountRepository>();
 builder.Services.AddScoped<HwidRepository>();
 builder.Services.AddScoped<IpRepository>();
+builder.Services.AddScoped<UserRepository>();
 
 // Business Services
-builder.Services.AddScoped<AccountInfoService>();
+builder.Services.AddScoped<AccountService>();
 builder.Services.AddScoped<HwidService>();
 builder.Services.AddScoped<IpService>();
+builder.Services.AddScoped<UserService>();
 #endregion
 
 var app = builder.Build();
