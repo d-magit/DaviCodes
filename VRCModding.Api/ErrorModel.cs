@@ -4,7 +4,7 @@ namespace VRCModding.Api;
 
 public class ErrorModel
 {
-    [JsonProperty("code")] 
+    [JsonProperty("errorType")] 
     public string CodeStr { get; set; }
 
     [JsonIgnore] 
@@ -28,13 +28,14 @@ public class ErrorModel
 
     public string Message { get; set; }
 
-    public Dictionary<string, string>? Details { get; set; }
+    //public Dictionary<string, string>? Details { get; set; }
+    public object? Details { get; set; }
 
     public override string ToString() 
     { 
-        var detailsString = string.Empty; 
-        if (Details is {Count: > 0})
-            detailsString = Environment.NewLine + string.Join(Environment.NewLine, Details); 
-        return $"{CodeStr} - {Message}{detailsString}"; 
+        // var detailsString = string.Empty; 
+        // if (Details is {Count: > 0})
+        //     detailsString = Environment.NewLine + string.Join(Environment.NewLine, Details); 
+        return $"{CodeStr} - {Message}{Details}"; 
     }
 }

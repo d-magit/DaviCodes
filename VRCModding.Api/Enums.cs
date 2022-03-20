@@ -9,5 +9,5 @@ public enum ErrorCodes
     IpIsRequired,
     FailedToFetchIp,
     FailedToDeduceUser,
-    UserHoneypotted
+    UserHoneypot
 }
