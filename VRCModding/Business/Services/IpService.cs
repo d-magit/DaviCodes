@@ -15,7 +15,7 @@ public class IpService {
 		this.exceptionBuilder = exceptionBuilder;
 	}
 
-	public async Task<Ip?> GetAsync(string? ip) {
+	public async Task<Ip?> TryGetAsync(string? ip) {
 		if (string.IsNullOrEmpty(ip)) return null;
 		return await ipRepository.TryGetAsync(ip);
 	}

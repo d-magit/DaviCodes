@@ -12,10 +12,10 @@ public class HwidRepository {
     
     public async Task<Hwid?> TryGetAsync(string hwid) =>
         await dbContext.Hwids
-	        .Include(h => h.User)
+	        //.Include(h => h.User)
 	        .FirstOrDefaultAsync(h => h.Id == hwid);
     
-    public async Task<Hwid> CreateAsync(string? hwid, Guid guid) {
+    public async Task<Hwid> CreateAsync(string hwid, Guid guid) {
         var hwidEntity = new Hwid {
             Id = hwid,
             UserFK = guid

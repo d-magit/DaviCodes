@@ -49,7 +49,7 @@ namespace VRCModding.Migrations
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     UserFK = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
                     LastLogin = table.Column<DateTime>(type: "datetime(6)", nullable: false),
-                    DisplayNameFK = table.Column<string>(type: "varchar(255)", nullable: false)
+                    DisplayNameFK = table.Column<string>(type: "varchar(255)", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4")
                 },
                 constraints: table =>
@@ -59,8 +59,7 @@ namespace VRCModding.Migrations
                         name: "FK_Accounts_DisplayNames_DisplayNameFK",
                         column: x => x.DisplayNameFK,
                         principalTable: "DisplayNames",
-                        principalColumn: "Name",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Name");
                     table.ForeignKey(
                         name: "FK_Accounts_Users_UserFK",
                         column: x => x.UserFK,

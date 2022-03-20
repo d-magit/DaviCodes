@@ -26,7 +26,6 @@ namespace VRCModding.Migrations
                         .HasColumnType("varchar(40)");
 
                     b.Property<string>("DisplayNameFK")
-                        .IsRequired()
                         .HasColumnType("varchar(255)");
 
                     b.Property<DateTime>("LastLogin")
@@ -138,9 +137,7 @@ namespace VRCModding.Migrations
                 {
                     b.HasOne("VRCModding.Entities.DisplayName", "CurrentDisplayName")
                         .WithOne("CurrentAccount")
-                        .HasForeignKey("VRCModding.Entities.Account", "DisplayNameFK")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("VRCModding.Entities.Account", "DisplayNameFK");
 
                     b.HasOne("VRCModding.Entities.User", "User")
                         .WithMany("Accounts")

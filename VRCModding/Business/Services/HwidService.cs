@@ -15,7 +15,7 @@ public class HwidService {
         this.exceptionBuilder = exceptionBuilder;
     }
 
-    public async Task<Hwid?> GetAsync(string? hwid) {
+    public async Task<Hwid?> TryGetAsync(string? hwid) {
 	    if (string.IsNullOrEmpty(hwid)) return null;
 	    return await hwidRepository.TryGetAsync(hwid);
     }

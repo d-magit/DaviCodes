@@ -7,15 +7,19 @@ using VRCModding.Services;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 
-// Todo: Find out what is the category of this shit...
-// [assembly: SuppressMessage("Microsoft.Design", "CS8618", Justification = "Entity class does not need initialization.", Scope = "namespaceanddescendants", Target = nameof(VRCModding.Entities))]
-
 var builder = WebApplication.CreateBuilder(args);
 builder.Host.ConfigureLogging((hostingContext, logging) => {
-	logging.AddSerilog(
-		new LoggerConfiguration()
-			.ReadFrom.Configuration(hostingContext.Configuration, "Serilog") // Todo: Find out how to log per day or instance of Run
-			.CreateLogger()
+	logging.AddSerilog(((Func<LoggerConfiguration>)(() => {
+			// Default for all
+			var defaultConfig = new LoggerConfiguration().ReadFrom.Configuration(hostingContext.Configuration, "Serilog");
+			
+			// Custom cases
+			return builder.Environment.IsDevelopment() ? defaultConfig
+				.WriteTo.File(
+					path: $"../Logs/{DateTime.Today:yyyy-M-d}-VRCModding.txt", 
+					outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level:u3}] [{SourceContext}] {Message:lj}{NewLine}{Exception}"
+				) : defaultConfig; // Allows for other Environments
+		})).Invoke().CreateLogger()
 	);
 });
 
@@ -63,17 +67,11 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
 
-//app.UseAuthorization();
+app.UseAuthorization();
 
-//app.UseEndpoints(endpoints => {
-//	endpoints.MapControllers();
-//});
-app.MapControllers(); // Todo: Debug initial state of code. Everything that was added on this commit.
-//app.MapControllerRoute(
-//    name: "default",
-//    pattern: "{controller}/{action=Index}/{id?}");
-
-app.MapFallbackToFile("index.html");
+app.UseEndpoints(endpoints => {
+	endpoints.MapControllers();
+});
 
 using (var scope = app.Services.CreateScope()) {
 	var services = scope.ServiceProvider;

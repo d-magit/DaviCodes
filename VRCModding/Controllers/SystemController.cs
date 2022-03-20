@@ -9,8 +9,7 @@ public class SystemController : Controller {
 	public object GetSystemInfo() {
 		var version = Assembly.GetEntryAssembly()?.GetName().Version;
 		return new {
-			version =
-				$"{version.Major}.{version.Minor}.{version.Build}",
+			version = $"{version?.Major}.{version?.Minor}.{version?.Build}"
 		};
 	}
 }

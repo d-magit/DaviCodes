@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace VRCModding.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20220319065014_Initial")]
+    [Migration("20220319184110_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -28,7 +28,6 @@ namespace VRCModding.Migrations
                         .HasColumnType("varchar(40)");
 
                     b.Property<string>("DisplayNameFK")
-                        .IsRequired()
                         .HasColumnType("varchar(255)");
 
                     b.Property<DateTime>("LastLogin")
@@ -140,9 +139,7 @@ namespace VRCModding.Migrations
                 {
                     b.HasOne("VRCModding.Entities.DisplayName", "CurrentDisplayName")
                         .WithOne("CurrentAccount")
-                        .HasForeignKey("VRCModding.Entities.Account", "DisplayNameFK")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("VRCModding.Entities.Account", "DisplayNameFK");
 
                     b.HasOne("VRCModding.Entities.User", "User")
                         .WithMany("Accounts")

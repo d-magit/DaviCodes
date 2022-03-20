@@ -6,7 +6,7 @@ using Newtonsoft.Json.Serialization;
 
 namespace VRCModding.Configuration; 
 
-public class ValidateModelStateAttribute: ActionFilterAttribute { // Todo: Add error cases and test if they look nice 
+public class ValidateModelStateAttribute: ActionFilterAttribute {
 	private static readonly DefaultContractResolver SharedContractResolver = new() {
 		NamingStrategy = new CamelCaseNamingStrategy {
 			ProcessDictionaryKeys = true
