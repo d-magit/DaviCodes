@@ -9,7 +9,9 @@ public class ModelConverter {
 
 	public UserModel ToModel(User user) =>
 		new() {
+			Id = user.Id,
 			Name = user.Name,
+			Permissions = user.Permissions.ToString(),
 			LastLogin = user.LastLogin,
 			CreationDateUtc = user.CreationDateUtc
 		};

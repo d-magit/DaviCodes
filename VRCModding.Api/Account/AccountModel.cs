@@ -1,9 +1,9 @@
 using System.ComponentModel.DataAnnotations;
 using VRCModding.Api.DisplayName;
 
-namespace VRCModding.Api.AccountInfo;
+namespace VRCModding.Api.Account;
 
-public class AccountInfoModel
+public class AccountModel
 {
     [Required]
     [MaxLength(40)]

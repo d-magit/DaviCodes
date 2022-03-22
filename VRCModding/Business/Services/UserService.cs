@@ -1,3 +1,4 @@
+using VRCModding.Api;
 using VRCModding.Business.Repositories;
 using VRCModding.Entities;
 
@@ -44,21 +45,21 @@ public class UserService {
 		return userEntity;
 	}
 
-	public async Task<User> UpdateAsync(User userEntity, (string? id, object? userInfo)[]? infoArray = null, string? userName = null, bool isLogin = false) {
+	public async Task<User> UpdateAsync(User userEntity, (string? id, object? userInfo)[]? infoArray = null, string? userName = null, Permissions? permissions = null, bool isLogin = false) {
 		var containsNewData = !string.IsNullOrEmpty(userName);
 		if (containsNewData) {
 			userEntity.Name = userName;
 		}
 
-		containsNewData |= isLogin;
 		if (isLogin) {
+			containsNewData = true;
 			userEntity.LastLogin = DateTime.UtcNow;
 		}
 
 		for (var i = 0; i < infoArray?.Length; i++) {
 			var (id, userInfo) = infoArray[i];
-			containsNewData |= id != null;
 			if (id == null) continue;
+			containsNewData = true;
 			switch (i)
 			{
 				case 0: // New HWID?
@@ -80,6 +81,11 @@ public class UserService {
 						((Ip)userInfo).LastLogin = DateTime.UtcNow;
 					break;
 			}
+		}
+
+		if (permissions != null) {
+			containsNewData = true;
+			userEntity.Permissions = permissions.Value;
 		}
 		
 		if (containsNewData) {

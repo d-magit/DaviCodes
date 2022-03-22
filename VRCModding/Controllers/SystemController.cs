@@ -4,8 +4,8 @@ using Microsoft.AspNetCore.Mvc;
 namespace VRCModding.Controllers; 
 
 [ApiController]
-[Route("api/system")]
-public class SystemController : Controller {
+[Route("api/v1/system")]
+public class SystemController : ControllerBase {
 	public object GetSystemInfo() {
 		var version = Assembly.GetEntryAssembly()?.GetName().Version;
 		return new {

@@ -1,8 +1,8 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace VRCModding.Api.AccountInfo;
+namespace VRCModding.Api.Account;
 
-public class AccountInfoData
+public class AccountData
 {
     [Required(ErrorMessage = "The User's ID is required.")]
     public string Id { get; set; }

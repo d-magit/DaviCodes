@@ -1,28 +1,30 @@
-using VRCModding.Api.Login;
-using VRCModding.Api.User;
+﻿using VRCModding.Api.Login;
 using VRCModding.Business;
 using VRCModding.Business.Services;
 using VRCModding.Entities;
 using VRCModding.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace VRCModding.Controllers;
 
 [ApiController]
-[Route("api/login")]
+[Route("api/v1/login")]
 public class LoginController : ControllerBase {
 	private readonly UserService userService;
 	private readonly AccountService accountService;
     private readonly HwidService hwidService;
     private readonly IpService ipService;
+    private readonly TokenGenerator tokenGenerator;
     private readonly ModelConverter modelConverter;
     private readonly ExceptionBuilder exceptionBuilder;
 
-    public LoginController(UserService userService, AccountService accountService, HwidService hwidService, IpService ipService, ModelConverter modelConverter, ExceptionBuilder exceptionBuilder) {
+    public LoginController(UserService userService, AccountService accountService, HwidService hwidService, IpService ipService, TokenGenerator tokenGenerator, ModelConverter modelConverter, ExceptionBuilder exceptionBuilder) {
 	    this.userService = userService;
 	    this.accountService = accountService;
         this.hwidService = hwidService;
         this.ipService = ipService;
+        this.tokenGenerator = tokenGenerator;
         this.modelConverter = modelConverter;
         this.exceptionBuilder = exceptionBuilder;
     }
@@ -35,7 +37,8 @@ public class LoginController : ControllerBase {
     /// <returns>UserModel with obtained or generated user's data</returns>
     /// <exception cref="ApiException"></exception>
     [HttpPost]
-    public async Task<LoginModel> LoginAsync([FromBody] LoginData loginData) {
+    [AllowAnonymous]
+    public async Task<LoginModel> LoginAsync([FromBody] LoginData loginData) { // Todo: Add roles and permissions
 	    var ip = HttpContext.Connection.RemoteIpAddress?.ToString();
 
 	    // Checks if parameters fulfill minimum of two to authenticate
@@ -70,11 +73,13 @@ public class LoginController : ControllerBase {
 		    },
 		    _ => throw exceptionBuilder.Api(Api.ErrorCodes.FailedToDeduceUser, infoUnboxedArr) // Todo: Failed to deduce user. Attempt merge, and then check if login is possible. Improve to detect users with multiple instances in db.
 	    };
+	    
 		// Todo: Report user login to Discord bot
-		// Todo: Add i18n, ErrorResources, Webhook endpoints, Discord Notification Templates, possibly a Discord bot too
-		return new LoginModel {
+		var loginModel = new LoginModel {
 			User = modelConverter.ToModel(user), 
 			ProvidedCredentials = modelConverter.ToModel(infoUnboxedArr)
 		};
+		loginModel.BearerToken = tokenGenerator.GenerateToken(loginModel);
+		return loginModel;
     }
 }

@@ -11,3 +11,11 @@ public enum ErrorCodes
     FailedToDeduceUser,
     UserHoneypot
 }
+
+[Flags]
+public enum Permissions
+{
+    None,
+    User,
+    Admin
+}
