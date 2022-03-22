@@ -140,7 +140,7 @@ namespace VRCModding.Migrations
                         .HasForeignKey("VRCModding.Entities.Account", "DisplayNameFK");
 
                     b.HasOne("VRCModding.Entities.User", "User")
-                        .WithMany("Accounts")
+                        .WithMany("KnownAccounts")
                         .HasForeignKey("UserFK")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -205,7 +205,7 @@ namespace VRCModding.Migrations
 
             modelBuilder.Entity("VRCModding.Entities.User", b =>
                 {
-                    b.Navigation("Accounts");
+                    b.Navigation("KnownAccounts");
 
                     b.Navigation("KnownHWIDs");
 
