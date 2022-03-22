@@ -4,9 +4,13 @@ using VRCModding.Business.Services;
 using VRCModding.Configuration;
 using VRCModding.Entities;
 using VRCModding.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using Serilog;
 
+// Todo: After all is done, create API search endpoints to look stuff up (such as alts, old nicknames, etc.)
+// Todo: Add i18n, ErrorResources, Webhook endpoints, RequirePermission attribute, Discord Notification Templates, possibly a Discord bot too, which includes studying API keys n shit, and also Authentication process
 var builder = WebApplication.CreateBuilder(args);
 builder.Host.ConfigureLogging((hostingContext, logging) => {
 	logging.AddSerilog(((Func<LoggerConfiguration>)(() => {
@@ -25,6 +29,11 @@ builder.Host.ConfigureLogging((hostingContext, logging) => {
 
 #region Services
 // General Services
+builder.Services.AddCors();
+// builder.Services.Configure<ForwardedHeadersOptions>(options =>
+// {
+// 	options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+// });
 builder.Services.AddControllersWithViews(o => {
 	o.Filters.Add<HandleExceptionFilter>();
 	o.Filters.Add<ValidateModelStateAttribute>();
@@ -34,12 +43,25 @@ builder.Services.AddDbContext<AppDbContext>(opt =>
     var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
     opt.UseMySql(connectionString, new MariaDbServerVersion(ServerVersion.AutoDetect(connectionString)));
 });
-builder.Services.AddScoped<ModelConverter>();
-builder.Services.AddScoped<ExceptionBuilder>();
-//builder.Services.AddSwaggerGen(c =>
-//{
-//    c.SwaggerDoc("v1", new() { Title = "TodoApi", Version = "v1" });
-//});
+var key = System.Text.Encoding.ASCII.GetBytes(builder.Configuration.GetValue<string>("General:PrivateKey"));
+builder.Services.AddSingleton(s =>
+	new TokenGenerator(key)
+);
+builder.Services.AddAuthentication(a => {
+	a.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+	a.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+}).AddJwtBearer(j=> {
+	j.RequireHttpsMetadata = false;
+	j.SaveToken = true;
+	j.TokenValidationParameters = new TokenValidationParameters {
+		ValidateIssuerSigningKey = true,
+		IssuerSigningKey = new SymmetricSecurityKey(key),
+		ValidateIssuer = false,
+		ValidateAudience = false
+	};
+});
+builder.Services.AddSingleton<ModelConverter>();
+builder.Services.AddSingleton<ExceptionBuilder>();
 
 // Business Repositories
 builder.Services.AddScoped<AccountRepository>();
@@ -56,6 +78,8 @@ builder.Services.AddScoped<UserService>();
 
 var app = builder.Build();
 
+app.UseForwardedHeaders();
+
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
@@ -63,10 +87,17 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
 
+app.UseCors(c => c
+	.AllowAnyOrigin()
+	.AllowAnyMethod()
+	.AllowAnyHeader()
+);
+
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.UseEndpoints(endpoints => {
