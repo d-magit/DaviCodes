@@ -5,6 +5,7 @@ using VRCModding.Configuration;
 using VRCModding.Entities;
 using VRCModding.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Serilog;
@@ -30,10 +31,10 @@ builder.Host.ConfigureLogging((hostingContext, logging) => {
 #region Services
 // General Services
 builder.Services.AddCors();
-// builder.Services.Configure<ForwardedHeadersOptions>(options =>
-// {
-// 	options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
-// });
+builder.Services.Configure<ForwardedHeadersOptions>(options =>
+{
+	options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+});
 builder.Services.AddControllersWithViews(o => {
 	o.Filters.Add<HandleExceptionFilter>();
 	o.Filters.Add<ValidateModelStateAttribute>();
