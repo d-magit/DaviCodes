@@ -10,15 +10,13 @@ public class UserService {
 	private readonly AccountRepository accountRepository;
 	private readonly IpRepository ipRepository;
 	private readonly AppDbContext dbContext;
-	private readonly ExceptionBuilder exceptionBuilder;
 
-	public UserService(UserRepository userRepository, HwidRepository hwidRepository, AccountRepository accountRepository, IpRepository ipRepository, AppDbContext dbContext, ExceptionBuilder exceptionBuilder) {
+	public UserService(UserRepository userRepository, HwidRepository hwidRepository, AccountRepository accountRepository, IpRepository ipRepository, AppDbContext dbContext) {
 		this.userRepository = userRepository;
 		this.hwidRepository = hwidRepository;
 		this.accountRepository = accountRepository;
 		this.ipRepository = ipRepository;
 		this.dbContext = dbContext;
-		this.exceptionBuilder = exceptionBuilder;
 	}
 	
 	public async Task<User?> TryGetByGuidAsync(Guid userGuid) {
@@ -28,15 +26,17 @@ public class UserService {
 	
 	public async Task<User> CreateAsync((string? id, object? userInfo)[] infoArray, string? userName = null) {
 		var userEntity = await userRepository.CreateAsync(userName);
-		
-		string? id;
-		if ((id = infoArray[0].id) != null) {
+
+		var id = infoArray[0].id;
+		if (!string.IsNullOrEmpty(id)) {
 			await hwidRepository.CreateAsync(id, userEntity.Id);
 		}
-		if ((id = infoArray[1].id) != null) {
+		id = infoArray[1].id;
+		if (!string.IsNullOrEmpty(id)) {
 			await accountRepository.CreateAsync(id, userEntity.Id);
 		}
-		if ((id = infoArray[2].id) != null) {
+		id = infoArray[2].id;
+		if (!string.IsNullOrEmpty(id)) {
 			await ipRepository.CreateAsync(id, userEntity.Id);
 		}
 		
@@ -58,7 +58,7 @@ public class UserService {
 
 		for (var i = 0; i < infoArray?.Length; i++) {
 			var (id, userInfo) = infoArray[i];
-			if (id == null) continue;
+			if (string.IsNullOrEmpty(id)) continue;
 			containsNewData = true;
 			switch (i)
 			{

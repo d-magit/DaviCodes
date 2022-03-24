@@ -39,7 +39,7 @@ public class LoginController : ControllerBase {
     [HttpPost]
     [AllowAnonymous]
     public async Task<LoginModel> LoginAsync([FromBody] LoginData loginData) { // Todo: Add roles and permissions
-	    var ip = HttpContext.Connection.RemoteIpAddress?.ToString();
+	    var ip = "";
 
 	    // Checks if parameters fulfill minimum of two to authenticate
 	    var info = new [] { loginData.Hwid, loginData.LastAccountId, ip }.Where(s => !string.IsNullOrEmpty(s));

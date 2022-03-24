@@ -9,11 +9,16 @@ public class DisplayNameRepository {
 	public DisplayNameRepository(AppDbContext dbContext) {
 		this.dbContext = dbContext;
 	}
-    
-	public async Task<DisplayName?> TryGetAsync(string displayName) =>
-		await dbContext.DisplayNames
-			.Include(d => d.CurrentAccount)
-			.FirstOrDefaultAsync(d => d.Name == displayName);
+
+	public async Task<DisplayName?> TryGetAsync(string displayName, bool includeCurrAcc = false) {
+		var query = dbContext.DisplayNames.AsQueryable();
+
+		if (includeCurrAcc) {
+			query = query.Include(d => d.CurrentAccount);
+		}
+
+		return await query.FirstOrDefaultAsync(d => d.Name == displayName);
+	}
     
 	public async Task<DisplayName> CreateAsync(string displayName) {
 		var displayNameEntity = new DisplayName {

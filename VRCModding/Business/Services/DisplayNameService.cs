@@ -9,9 +9,12 @@ public class DisplayNameService {
 	public DisplayNameService(DisplayNameRepository displayNameRepository) {
 		this.displayNameRepository = displayNameRepository;
 	}
+	
+	public async Task<DisplayName?> TryGetAsync(string displayName) =>
+		await displayNameRepository.TryGetAsync(displayName);
 
 	public async Task<DisplayName> ReserveAsync(string displayName) {
-		var displayNameEntity = await displayNameRepository.TryGetAsync(displayName);
+		var displayNameEntity = await displayNameRepository.TryGetAsync(displayName, true);
 		if (displayNameEntity == null)
 			displayNameEntity = await displayNameRepository.CreateAsync(displayName);
 		else if (displayNameEntity.CurrentAccount != null)

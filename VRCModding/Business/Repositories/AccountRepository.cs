@@ -17,15 +17,13 @@ public class AccountRepository {
     }
 
     public async Task<Account?> TryGetAsync(string uid, bool includeDisplayName = false) {
-	    var initialQuery = dbContext.Accounts;
+	    var initialQuery = dbContext.Accounts.AsQueryable();
 	    
-	    IIncludableQueryable<Account, DisplayName?>? displayNameQuery = null; 
 	    if (includeDisplayName) {
-		    displayNameQuery = initialQuery
-			    .Include(a => a.CurrentDisplayName);
+		    initialQuery = initialQuery.Include(a => a.CurrentDisplayName);
 	    }
-	    return await (includeDisplayName ? displayNameQuery!.AsQueryable() : initialQuery.AsQueryable())
-		    .FirstOrDefaultAsync(a => a.Id == uid);
+	    
+	    return await initialQuery.AsQueryable().FirstOrDefaultAsync(a => a.Id == uid);
     }
     
     public async Task CreateAsync(string uid, Guid userGuid, string? displayName = null) {

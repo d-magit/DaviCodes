@@ -1,6 +1,5 @@
 using VRCModding.Api;
 using VRCModding.Services;
-using Newtonsoft.Json;
 
 namespace VRCModding.Business; 
 
@@ -15,10 +14,6 @@ public class ExceptionBuilder {
 		var message = code switch {
 			ErrorCodes.Unknown => "An Unknown error has occurred.",
 			ErrorCodes.InsufficientCredentials => "At least two credentials are necessary to log in.",
-			ErrorCodes.HwidIsRequired => "The User's HWID is required.",
-			ErrorCodes.UserIdIsRequired => "The User's ID is required.",
-			ErrorCodes.IpIsRequired => "The User's IP is required.",
-			ErrorCodes.DisplayNameIsRequired => "The User's Display Name is required.",
 			ErrorCodes.FailedToFetchIp => "An error occurred while trying to fetch User's IP, and the operation failed to complete.",
 			ErrorCodes.FailedToDeduceUser => "An error occurred while trying to deduce User from given info, and the operation failed to complete.",
 			ErrorCodes.UserHoneypot => "Honeypot Users cannot login.",

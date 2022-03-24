@@ -11,7 +11,6 @@
         <LangVersion>latest</LangVersion>
         <Description>Backend for the website - VRCModding.</Description>
         <Copyright>Created by Elaina</Copyright>
-        <NoWarn>1701;1702;CS8618</NoWarn>
     </PropertyGroup>
 
     <ItemGroup>

@@ -10,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Serilog;
 
+// Todo: Add validations to all endpoints.
 // Todo: After all is done, create API search endpoints to look stuff up (such as alts, old nicknames, etc.)
 // Todo: Add i18n, ErrorResources, Webhook endpoints, RequirePermission attribute, Discord Notification Templates, possibly a Discord bot too, which includes studying API keys n shit, and also Authentication process
 var builder = WebApplication.CreateBuilder(args);
@@ -66,12 +67,15 @@ builder.Services.AddSingleton<ExceptionBuilder>();
 
 // Business Repositories
 builder.Services.AddScoped<AccountRepository>();
+builder.Services.AddScoped<DisplayNameRepository>();
 builder.Services.AddScoped<HwidRepository>();
 builder.Services.AddScoped<IpRepository>();
+builder.Services.AddScoped<UsedDisplayNameRepository>();
 builder.Services.AddScoped<UserRepository>();
 
 // Business Services
 builder.Services.AddScoped<AccountService>();
+builder.Services.AddScoped<DisplayNameService>();
 builder.Services.AddScoped<HwidService>();
 builder.Services.AddScoped<IpService>();
 builder.Services.AddScoped<UserService>();

@@ -1,4 +1,3 @@
-using VRCModding.Api;
 using VRCModding.Business.Repositories;
 using VRCModding.Entities;
 
@@ -19,9 +18,9 @@ public class AccountService {
         this.exceptionBuilder = exceptionBuilder;
     }
 
-    public async Task<Account?> TryGetAsync(string? uid) {
+    public async Task<Account?> TryGetAsync(string? uid, bool includeDisplayName = false) {
         if (string.IsNullOrEmpty(uid)) return null;
-        var accountEntity = await accountRepository.TryGetAsync(uid);
+        var accountEntity = await accountRepository.TryGetAsync(uid, includeDisplayName);
         if (accountEntity == null) {} // Todo: If uid is not null, but didn't find in DB, then something went wrong (maybe someone tryna be funny..?), add discord notification.
         return accountEntity; 
     }
@@ -32,11 +31,13 @@ public class AccountService {
     }
     
     public async Task UpdateAsync(Account accountEntity, string displayName) { // If got here, displayName is not null or empty (for now).
-	    if (accountEntity.DisplayNameFK == displayName) return;
+	    var displayNameEntity = accountEntity.CurrentDisplayName;
+	    if (accountEntity.DisplayNameFK != displayName) {
+		    displayNameEntity = await displayNameService.ReserveAsync(displayName);
+		    accountEntity.DisplayNameFK = displayName;
+	    }
 	    
-	    accountEntity.DisplayNameFK = displayName;
-	    var displayNameEntity = await displayNameService.ReserveAsync(displayName);
-	    var usedDisplayNameEntity = await usedDisplayNameRepository.TryGetAsync(accountEntity.Id, displayNameEntity.Name);
+	    var usedDisplayNameEntity = await usedDisplayNameRepository.TryGetAsync(accountEntity.Id, displayNameEntity!.Name);
 	    if (usedDisplayNameEntity == null)
 		    await usedDisplayNameRepository.CreateAsync(accountEntity.Id, displayNameEntity.Name);
 	    else

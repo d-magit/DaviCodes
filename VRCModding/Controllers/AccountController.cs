@@ -4,7 +4,6 @@ using VRCModding.Api.Account;
 using VRCModding.Business;
 using VRCModding.Business.Services;
 using VRCModding.Helpers;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace VRCModding.Controllers;
@@ -27,14 +26,9 @@ public class AccountController : ControllerBase {
     /// <returns>HTTP OK Response</returns>
     /// <exception cref="ApiException"></exception>
     [HttpPost]
-    [AuthorizePerms(RoleEnum = Permissions.User)]
-    public async Task<IActionResult> CreateOrUpdateAsync([FromBody] AccountData accountData) {
-		if (string.IsNullOrEmpty(accountData.CurrentDisplayName)) // No need to check if null at displayNameRepo and usedDisplayNameRepo (for now), since already checking here.
-			throw exceptionBuilder.Api(ErrorCodes.DisplayNameIsRequired);
-	    if (string.IsNullOrEmpty(accountData.Id))
-			throw exceptionBuilder.Api(ErrorCodes.UserIdIsRequired);
-
-		var account = await accountService.TryGetAsync(accountData.Id);
+    [AuthorizePerms(RoleEnum = Permissions.User | Permissions.Admin)]
+    public async Task<IActionResult> CreateOrUpdateAsync([FromBody] AccountData accountData) { // No need to check if null at displayNameRepo and usedDisplayNameRepo (for now), since already checking here.
+		var account = await accountService.TryGetAsync(accountData.Id, true);
 		if (account == null) {
 			await accountService.CreateAsync(accountData.Id, new Guid(User.Claims.First(c => c.Type == ClaimTypes.PrimarySid).Value), accountData.CurrentDisplayName);
 		} else {
