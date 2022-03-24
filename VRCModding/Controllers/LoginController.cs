@@ -38,7 +38,7 @@ public class LoginController : ControllerBase {
     /// <exception cref="ApiException"></exception>
     [HttpPost]
     [AllowAnonymous]
-    public async Task<LoginModel> LoginAsync([FromBody] LoginData loginData) { // Todo: Add roles and permissions
+    public async Task<LoginModel> LoginAsync([FromBody] LoginData loginData) {
 	    var ip = "";
 
 	    // Checks if parameters fulfill minimum of two to authenticate

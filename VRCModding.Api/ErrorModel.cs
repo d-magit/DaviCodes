@@ -4,38 +4,17 @@ namespace VRCModding.Api;
 
 public class ErrorModel
 {
-    [JsonProperty("errorType")] 
-    public string CodeStr { get; set; }
+    public Dictionary<string, object[]> Errors = new();
 
     [JsonIgnore] 
-    public ErrorCodes Code 
-    { 
-        get 
-        { 
-            ErrorCodes res; 
-            try 
-            { 
-                res = (ErrorCodes)Enum.Parse(typeof(ErrorCodes), CodeStr); 
-            } 
-            catch 
-            { 
-                res = ErrorCodes.Unknown; 
-            } 
-            return res; 
-        } 
-        set => CodeStr = value.ToString();
-    }
+    public (ErrorCodes errorCode, string message, object? details) Code 
+    {
+        set
+        {
+            Errors.Add(value.errorCode.ToString(), new[] {value.message, value.details!});
+            LastAddedMessage = value.message;
+        }
+    } 
 
-    public string Message { get; set; }
-
-    //public Dictionary<string, string>? Details { get; set; }
-    public object? Details { get; set; }
-
-    public override string ToString() 
-    { 
-        // var detailsString = string.Empty; 
-        // if (Details is {Count: > 0})
-        //     detailsString = Environment.NewLine + string.Join(Environment.NewLine, Details); 
-        return $"{CodeStr} - {Message}{Details}"; // Details is an object, and this might be wrong, but I won't mind it for now... 
-    }
+    [JsonIgnore] public string LastAddedMessage;
 }

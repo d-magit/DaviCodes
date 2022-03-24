@@ -19,8 +19,7 @@ public class ExceptionBuilder {
 			ErrorCodes.UserHoneypot => "Honeypot Users cannot login.",
 			_ => string.Empty
 		};
-		return new ApiException(new ErrorModel { Code = code, Message = message, 
-			Details = modelConverter.ToModel(details)});
+		return new ApiException(new ErrorModel { Code = (code, message, modelConverter.ToModel(details)) });
 		//	Details = getDetailsDictionary(details)
 	}
 
@@ -39,7 +38,7 @@ public class ExceptionBuilder {
 public class ApiException : Exception {
 	public ErrorModel Error { get; set; }
 
-	public ApiException(ErrorModel error) : base(error.Message) {
+	public ApiException(ErrorModel error) : base(error.LastAddedMessage) {
 		Error = error;
 	}
 }
