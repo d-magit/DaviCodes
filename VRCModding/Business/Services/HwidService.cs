@@ -19,14 +19,4 @@ public class HwidService {
 	    if (string.IsNullOrEmpty(hwid)) return null;
 	    return await hwidRepository.TryGetAsync(hwid);
     }
-
-    public async Task<Hwid?> CreateAsync(string? hwid, Guid userGuid) {
-	    if (string.IsNullOrEmpty(hwid))
-		    throw exceptionBuilder.Api(ErrorCodes.HwidIsRequired);
-
-	    var hwidEntity = await hwidRepository.CreateAsync(hwid, userGuid);
-	    await dbContext.SaveChangesAsync();
-
-	    return hwidEntity;
-    }
 }

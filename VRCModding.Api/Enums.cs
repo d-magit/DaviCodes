@@ -4,10 +4,6 @@ public enum ErrorCodes
 { 
     Unknown ,
     InsufficientCredentials,
-    HwidIsRequired,
-    UserIdIsRequired,
-    IpIsRequired,
-    DisplayNameIsRequired,
     FailedToFetchIp,
     FailedToDeduceUser,
     UserHoneypot
