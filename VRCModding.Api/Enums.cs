@@ -7,6 +7,7 @@ public enum ErrorCodes
     HwidIsRequired,
     UserIdIsRequired,
     IpIsRequired,
+    DisplayNameIsRequired,
     FailedToFetchIp,
     FailedToDeduceUser,
     UserHoneypot

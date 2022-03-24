@@ -5,13 +5,17 @@ using VRCModding.Entities;
 namespace VRCModding.Business.Services;
 
 public class AccountService {
-    private readonly AccountRepository accountRepository;
-    private readonly AppDbContext dbContext;
+	private readonly DisplayNameService displayNameService;
+	private readonly AccountRepository accountRepository;
+	private readonly UsedDisplayNameRepository usedDisplayNameRepository;
+	private readonly AppDbContext dbContext;
     private readonly ExceptionBuilder exceptionBuilder;
 
-    public AccountService(AccountRepository accountRepository, AppDbContext dbContext, ExceptionBuilder exceptionBuilder) {
-        this.accountRepository = accountRepository;
-        this.dbContext = dbContext;
+    public AccountService(DisplayNameService displayNameService, AccountRepository accountRepository, UsedDisplayNameRepository usedDisplayNameRepository, AppDbContext dbContext, ExceptionBuilder exceptionBuilder) {
+	    this.displayNameService = displayNameService;
+	    this.accountRepository = accountRepository;
+	    this.usedDisplayNameRepository = usedDisplayNameRepository;
+	    this.dbContext = dbContext;
         this.exceptionBuilder = exceptionBuilder;
     }
 
@@ -22,13 +26,22 @@ public class AccountService {
         return accountEntity; 
     }
     
-    public async Task<Account?> CreateAsync(string? uid, Guid userGuid, string? displayName = null) {
-	    if (string.IsNullOrEmpty(uid))
-		    throw exceptionBuilder.Api(ErrorCodes.UserIdIsRequired);
-
-	    var accountEntity = await accountRepository.CreateAsync(uid, userGuid, displayName);
+    public async Task CreateAsync(string uid, Guid userGuid, string displayName) { // If got here, nothing is not null or empty. This is temporary. If uid can ever be null, remove check from Controller's CreateOrUpdateAsync
+	    await accountRepository.CreateAsync(uid, userGuid, displayName);
 	    await dbContext.SaveChangesAsync();
-
-	    return accountEntity;
+    }
+    
+    public async Task UpdateAsync(Account accountEntity, string displayName) { // If got here, displayName is not null or empty (for now).
+	    if (accountEntity.DisplayNameFK == displayName) return;
+	    
+	    accountEntity.DisplayNameFK = displayName;
+	    var displayNameEntity = await displayNameService.ReserveAsync(displayName);
+	    var usedDisplayNameEntity = await usedDisplayNameRepository.TryGetAsync(accountEntity.Id, displayNameEntity.Name);
+	    if (usedDisplayNameEntity == null)
+		    await usedDisplayNameRepository.CreateAsync(accountEntity.Id, displayNameEntity.Name);
+	    else
+		    usedDisplayNameEntity.LastUsage = DateTime.UtcNow;
+	    
+	    await dbContext.SaveChangesAsync();
     }
 }

@@ -64,22 +64,26 @@ public class LoginController : ControllerBase {
 	    var infoGroupedByUserFksArr = infoGroupedByUserFks as IGrouping<Guid?,(string? id, IUserInfo? userInfo)>[] ?? infoGroupedByUserFks.ToArray();
 	    ////
 	    
+	    // Todo: Report user login attempts below to Discord bot
 	    // Filters out any null userInfos and then tries to deduce who the user is
 	    var user = infoGroupedByUserFksArr.Length switch {
 		    0 => await userService.CreateAsync(userInfosBoxed), // User provided enough info but wasn't known
 		    1 => infoGroupedByUserFksArr[0].Count() switch { // User was known
-			    1 => throw exceptionBuilder.Api(Api.ErrorCodes.UserHoneypot, infoUnboxedArr), // Todo: Only one piece of data was known about user, so honeypot
-			    _ => await userService.UpdateAsync((await userService.TryGetByGuidAsync(infoGroupedByUserFksArr[0].Key!.Value))!, userInfosBoxed, isLogin: true), // User provided enough and/or known/unknown extra data and so we check that, and store any new info
+			    1 => throw exceptionBuilder.Api(Api.ErrorCodes.UserHoneypot, infoUnboxedArr), // Todo: Only one piece of data was known about user, so honeypot. Notify Discord with data, but don't approve yet.
+			    _ => await userService.UpdateAsync((await userService.TryGetByGuidAsync(infoGroupedByUserFksArr[0].Key!.Value))!, userInfosBoxed, isLogin: true), // User provided enough and/or known/unknown extra data and so we check that, and store any new info. Notify login
 		    },
-		    _ => throw exceptionBuilder.Api(Api.ErrorCodes.FailedToDeduceUser, infoUnboxedArr) // Todo: Failed to deduce user. Attempt merge, and then check if login is possible. Improve to detect users with multiple instances in db.
+		    _ => throw exceptionBuilder.Api(Api.ErrorCodes.FailedToDeduceUser, infoUnboxedArr) // Todo: Failed to deduce user. Improve to detect users with multiple instances in db. Attempt merge (2 point to one user, 1 point to anonymous) and then login if possible, or honeypot (1 point to one user, 2 point to anonymous). Don't forget to notify Discord.
 	    };
 	    
-		// Todo: Report user login to Discord bot
 		var loginModel = new LoginModel {
 			User = modelConverter.ToModel(user), 
-			ProvidedCredentials = modelConverter.ToModel(infoUnboxedArr)
+			ProvidedCredentials = modelConverter.ToModel(infoUnboxedArr) // Todo: Once finished debugging, clean this up and only show main credentials (infoAsStrings).
 		};
-		loginModel.BearerToken = tokenGenerator.GenerateToken(loginModel);
+
+		if (!string.IsNullOrEmpty(loginModel.User.Name)) { // Todo: This will go away once honeypot is done, as it'll be throwing an API exception instead.
+			loginModel.BearerToken = tokenGenerator.GenerateToken(loginModel);
+		}
+		
 		return loginModel;
     }
 }

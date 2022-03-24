@@ -19,6 +19,7 @@ public class TokenGenerator {
 				new SecurityTokenDescriptor {
 					Subject = new ClaimsIdentity(new Claim[] {
 						new(ClaimTypes.PrimarySid, credentials.User.Id.ToString()),
+						new(ClaimTypes.Name, credentials.User.Name!),
 						new(ClaimTypes.Role, credentials.User.Permissions)
 					}),
 					Expires = DateTime.UtcNow.AddMinutes(15),
