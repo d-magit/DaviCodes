@@ -11,6 +11,9 @@
         <LangVersion>latest</LangVersion>
         <Description>Backend for the website - VRCModding.</Description>
         <Copyright>Created by Elaina</Copyright>
+        <PackageVersion>1.0.1</PackageVersion>
+        <AssemblyVersion>1.0.1</AssemblyVersion>
+        <FileVersion>1.0.1</FileVersion>
     </PropertyGroup>
 
     <ItemGroup>

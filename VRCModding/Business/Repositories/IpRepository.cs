@@ -15,14 +15,12 @@ public class IpRepository {
 			//.Include(i => i.User)
 			.FirstOrDefaultAsync(i => i.Id == ip);
     
-	public async Task<Ip> CreateAsync(string ip, Guid guid) {
+	public async Task CreateAsync(string ip, Guid userId) {
 		var ipEntity = new Ip {
 			Id = ip,
-			UserFK = guid
+			UserFK = userId
 		};
 
 		await dbContext.AddAsync(ipEntity);
-
-		return ipEntity;
 	}
 }

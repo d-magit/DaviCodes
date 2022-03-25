@@ -70,7 +70,7 @@ public class LoginController : ControllerBase {
 		    0 => await userService.CreateAsync(userInfosBoxed), // User provided enough info but wasn't known
 		    1 => infoGroupedByUserFksArr[0].Count() switch { // User was known
 			    1 => throw exceptionBuilder.Api(Api.ErrorCodes.UserHoneypot, infoUnboxedArr), // Todo: Only one piece of data was known about user, so honeypot. Notify Discord with data, but don't approve yet.
-			    _ => await userService.UpdateAsync((await userService.TryGetByGuidAsync(infoGroupedByUserFksArr[0].Key!.Value))!, userInfosBoxed, isLogin: true), // User provided enough and/or known/unknown extra data and so we check that, and store any new info. Notify login
+			    _ => await userService.UpdateAsync((await userService.TryGetByIdAsync(infoGroupedByUserFksArr[0].Key!.Value))!, userInfosBoxed, isLogin: true), // User provided enough and/or known/unknown extra data and so we check that, and store any new info. Notify login
 		    },
 		    _ => throw exceptionBuilder.Api(Api.ErrorCodes.FailedToDeduceUser, infoUnboxedArr) // Todo: Failed to deduce user. Improve to detect users with multiple instances in db. Attempt merge (2 point to one user, 1 point to anonymous) and then login if possible, or honeypot (1 point to one user, 2 point to anonymous). Don't forget to notify Discord.
 	    };

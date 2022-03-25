@@ -15,14 +15,12 @@ public class HwidRepository {
 	        //.Include(h => h.User)
 	        .FirstOrDefaultAsync(h => h.Id == hwid);
     
-    public async Task<Hwid> CreateAsync(string hwid, Guid guid) {
+    public async Task CreateAsync(string hwid, Guid userId) {
         var hwidEntity = new Hwid {
             Id = hwid,
-            UserFK = guid
+            UserFK = userId
         };
 
         await dbContext.AddAsync(hwidEntity);
-
-        return hwidEntity;
     }
 }

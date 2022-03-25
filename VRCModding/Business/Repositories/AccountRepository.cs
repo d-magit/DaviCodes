@@ -26,10 +26,10 @@ public class AccountRepository {
 	    return await initialQuery.AsQueryable().FirstOrDefaultAsync(a => a.Id == uid);
     }
     
-    public async Task CreateAsync(string uid, Guid userGuid, string? displayName = null) {
+    public async Task CreateAsync(string accountId, Guid userId, string? displayName = null) {
 	    var accountEntity = new Account {
-		    Id = uid,
-		    UserFK = userGuid
+		    Id = accountId,
+		    UserFK = userId
 	    };
         
 	    if (!string.IsNullOrEmpty(displayName)) {

@@ -25,8 +25,8 @@ public class AccountService {
         return accountEntity; 
     }
     
-    public async Task CreateAsync(string uid, Guid userGuid, string displayName) { // If got here, nothing is not null or empty. This is temporary. If uid can ever be null, remove check from Controller's CreateOrUpdateAsync
-	    await accountRepository.CreateAsync(uid, userGuid, displayName);
+    public async Task CreateAsync(string accountId, Guid userId, string displayName) { // If got here, nothing is not null or empty. This is temporary. If uid can ever be null, remove check from Controller's CreateOrUpdateAsync
+	    await accountRepository.CreateAsync(accountId, userId, displayName);
 	    await dbContext.SaveChangesAsync();
     }
     

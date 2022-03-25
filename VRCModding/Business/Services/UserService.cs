@@ -19,9 +19,8 @@ public class UserService {
 		this.dbContext = dbContext;
 	}
 	
-	public async Task<User?> TryGetByGuidAsync(Guid userGuid) {
-		if (userGuid == Guid.Empty) return null;
-		return await userRepository.TryGetByGuidAsync(userGuid);
+	public async Task<User?> TryGetByIdAsync(Guid userId) {
+		return await userRepository.TryGetByGuidAsync(userId);
 	}
 	
 	public async Task<User> CreateAsync((string? id, object? userInfo)[] infoArray, string? userName = null) {

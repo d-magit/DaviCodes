@@ -10,9 +10,9 @@ public class UserRepository {
 		this.dbContext = dbContext;
 	}
 	
-	public async Task<User?> TryGetByGuidAsync(Guid userGuid) =>
+	public async Task<User?> TryGetByGuidAsync(Guid userId) =>
 		await dbContext.Users
-			.FirstOrDefaultAsync(u => u.Id == userGuid);
+			.FirstOrDefaultAsync(u => u.Id == userId);
 	
 	public async Task<User?> TryGetByUsernameAsync(string username) =>
 		await dbContext.Users
