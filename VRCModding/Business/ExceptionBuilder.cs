@@ -1,4 +1,4 @@
-using VRCModding.Api;
+﻿using VRCModding.Api;
 using VRCModding.Services;
 
 namespace VRCModding.Business; 
