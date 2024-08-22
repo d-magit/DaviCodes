@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VRCModding", "VRCModding\VRCModding.csproj", "{A532A5A5-2B46-4B5D-9B62-80C23B4E9AD4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VRCModding.Api", "VRCModding.Api\VRCModding.Api.csproj", "{394D1F8B-CEFD-40A9-BD2B-CC7C2107CBD2}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A532A5A5-2B46-4B5D-9B62-80C23B4E9AD4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A532A5A5-2B46-4B5D-9B62-80C23B4E9AD4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A532A5A5-2B46-4B5D-9B62-80C23B4E9AD4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A532A5A5-2B46-4B5D-9B62-80C23B4E9AD4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{394D1F8B-CEFD-40A9-BD2B-CC7C2107CBD2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{394D1F8B-CEFD-40A9-BD2B-CC7C2107CBD2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{394D1F8B-CEFD-40A9-BD2B-CC7C2107CBD2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{394D1F8B-CEFD-40A9-BD2B-CC7C2107CBD2}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
